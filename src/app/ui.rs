@@ -15,68 +15,19 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
         .direction(Direction::Vertical)
         .constraints([Constraint::Ratio(2, 3), Constraint::Ratio(1, 3)].as_ref())
         .split(size);
+
     let chunks2 = Layout::default()
         .direction(Direction::Horizontal)
-        //.margin(1)
-        .constraints(
-            [
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-                Constraint::Percentage(5),
-            ]
-            .as_ref(),
-        )
+        .constraints([Constraint::Percentage(5); 20].as_ref())
         .split(chunks[0]);
-
-    // Top two inner blocks
 
     // Top left inner block with green background
     for (i, xchunk) in chunks2.iter().enumerate().take(20) {
         let top_chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints(
-                [
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                    Constraint::Percentage(5),
-                ]
-                .as_ref(),
-            )
+            .constraints([Constraint::Percentage(5); 20].as_ref())
             .split(*xchunk);
+
         for (j, ychunk) in top_chunks.iter().enumerate().take(20) {
             if let MoveDirection::Empty = app.grid[i][j] {
                 let block = Block::default().style(Style::default().bg(Color::Green));
