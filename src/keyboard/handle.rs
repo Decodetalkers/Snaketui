@@ -152,11 +152,12 @@ impl IoAsyncHandler {
         drop(app);
 
         tokio::time::sleep(Duration::from_nanos(1)).await;
+        // sleep and move app to ui
         let (nstartx, nstarty) = (startx, starty);
 
         loop {
             let mut app = self.app.lock().await;
-            tokio::time::sleep(Duration::from_nanos(1)).await;
+            tokio::time::sleep(Duration::from_micros(1)).await;
             match direction {
                 MoveDirection::Up => {
                     let (bstartx, bstarty) = (startx, starty);
