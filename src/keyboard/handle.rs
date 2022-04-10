@@ -247,9 +247,8 @@ impl IoAsyncHandler {
                     break;
                 }
             }
-            app.start = (nstartx, nstarty);
         }
-
+        app.start = (nstartx, nstarty);
         Ok(())
     }
     //async fn do_sleep(&mut self, duration: Duration) -> Result<()> {

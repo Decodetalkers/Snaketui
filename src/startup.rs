@@ -26,7 +26,7 @@ pub async fn start_ui(app: &Arc<tokio::sync::Mutex<App>>) -> Result<()> {
     let tick_rate = Duration::from_millis(100);
     //let _: Result<()> = async {
     loop {
-        let mut app = app.lock().await;
+        let app = app.lock().await;
         terminal.draw(|f| ui(f, &app))?;
 
         let timeout = tick_rate

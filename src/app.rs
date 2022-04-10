@@ -25,7 +25,7 @@ impl App {
             hasfood: false,
         }
     }
-    pub async fn dispatch(&mut self, action: IoEvent) {
+    pub async fn dispatch(&self, action: IoEvent) {
         // `is_loading` will be set to false again after the async action has finished in io/handler.rs
         //self.is_loading = true;
         if let Err(e) = self.io_tx.send(action).await {
