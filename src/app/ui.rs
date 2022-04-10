@@ -22,13 +22,13 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
         .split(chunks[0]);
 
     // Top left inner block with green background
-    for (i, xchunk) in chunks2.iter().enumerate().take(20) {
+    for (i, xchunk) in chunks2.iter().enumerate() {
         let top_chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Percentage(5); 20].as_ref())
             .split(*xchunk);
 
-        for (j, ychunk) in top_chunks.iter().enumerate().take(20) {
+        for (j, ychunk) in top_chunks.iter().enumerate() {
             if let MoveDirection::Empty = app.grid[i][j] {
                 let block = Block::default().style(Style::default().bg(Color::Green));
                 f.render_widget(block, *ychunk);
