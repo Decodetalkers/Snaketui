@@ -11,6 +11,7 @@ use tui::backend::CrosstermBackend;
 
 use crate::app::ui::ui;
 use crate::keyboard::{IoEvent, MoveDirection};
+use log::info;
 use tui::Terminal;
 pub async fn start_ui(app: &Arc<tokio::sync::Mutex<App>>) -> Result<()> {
     // Configure Crossterm backend for tui
@@ -27,6 +28,7 @@ pub async fn start_ui(app: &Arc<tokio::sync::Mutex<App>>) -> Result<()> {
     //let _: Result<()> = async {
     loop {
         let app = app.lock().await;
+        info!("Got it!");
         terminal.draw(|f| ui(f, &app))?;
 
         let timeout = tick_rate
@@ -35,32 +37,34 @@ pub async fn start_ui(app: &Arc<tokio::sync::Mutex<App>>) -> Result<()> {
         if !app.con {
             break;
         }
-        if crossterm::event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                match key.code {
-                    KeyCode::Char('q') => {
-                        break;
+        if !app.isrunning {
+            if crossterm::event::poll(timeout)? {
+                if let Event::Key(key) = event::read()? {
+                    match key.code {
+                        KeyCode::Char('q') => {
+                            break;
+                        }
+                        KeyCode::Left => {
+                            app.dispatch(IoEvent::Move(MoveDirection::Left)).await;
+                        }
+                        KeyCode::Right => {
+                            app.dispatch(IoEvent::Move(MoveDirection::Right)).await;
+                        }
+                        KeyCode::Up => {
+                            app.dispatch(IoEvent::Move(MoveDirection::Up)).await;
+                        }
+                        KeyCode::Down => {
+                            app.dispatch(IoEvent::Move(MoveDirection::Down)).await;
+                        }
+                        KeyCode::Char(_) => {
+                            app.dispatch(crate::keyboard::IoEvent::Initialize).await;
+                        }
+                        _ => {}
                     }
-                    KeyCode::Left => {
-                        app.dispatch(IoEvent::Move(MoveDirection::Left)).await;
-                    }
-                    KeyCode::Right => {
-                        app.dispatch(IoEvent::Move(MoveDirection::Right)).await;
-                    }
-                    KeyCode::Up => {
-                        app.dispatch(IoEvent::Move(MoveDirection::Up)).await;
-                    }
-                    KeyCode::Down => {
-                        app.dispatch(IoEvent::Move(MoveDirection::Down)).await;
-                    }
-                    KeyCode::Char(_) => {
-                        app.dispatch(crate::keyboard::IoEvent::Initialize).await;
-                    }
-                    _ => {}
                 }
+            } else {
+                app.dispatch(IoEvent::Move(MoveDirection::Empty)).await;
             }
-        } else {
-            app.dispatch(IoEvent::Move(MoveDirection::Empty)).await;
         }
         if last_tick.elapsed() >= tick_rate {
             //app.on_tick();

@@ -9,6 +9,7 @@ pub struct App {
     pub end: (usize, usize),
     pub con: bool,
     pub hasfood: bool,
+    pub isrunning: bool,
 }
 
 impl App {
@@ -23,6 +24,7 @@ impl App {
             end: (0, 0),
             con: true,
             hasfood: false,
+            isrunning: false,
         }
     }
     pub async fn dispatch(&self, action: IoEvent) {

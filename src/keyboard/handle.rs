@@ -44,6 +44,7 @@ impl IoAsyncHandler {
     }
     async fn do_move(&mut self, direction: MoveDirection) -> Result<()> {
         let mut app = self.app.lock().await;
+        app.isrunning = true;
         if !app.hasfood {
             loop {
                 let selectx: usize = rand::thread_rng().gen_range(0..20);
@@ -148,9 +149,14 @@ impl IoAsyncHandler {
             app.con = false;
             return Ok(());
         }
+        drop(app);
+
+        tokio::time::sleep(Duration::from_nanos(1)).await;
         let (nstartx, nstarty) = (startx, starty);
+
         loop {
-            tokio::time::sleep(Duration::from_nanos(10)).await;
+            let mut app = self.app.lock().await;
+            tokio::time::sleep(Duration::from_nanos(1)).await;
             match direction {
                 MoveDirection::Up => {
                     let (bstartx, bstarty) = (startx, starty);
@@ -248,7 +254,9 @@ impl IoAsyncHandler {
                 }
             }
         }
+        let mut app = self.app.lock().await;
         app.start = (nstartx, nstarty);
+        app.isrunning = false;
         Ok(())
     }
     //async fn do_sleep(&mut self, duration: Duration) -> Result<()> {
