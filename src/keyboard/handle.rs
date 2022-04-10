@@ -6,9 +6,8 @@ use log::{error, info};
 
 use super::{IoEvent, MoveDirection};
 use crate::app::App;
-
+use rand::Rng;
 /// In the IO thread, we handle IO event without blocking the UI thread
-#[allow(dead_code)]
 pub struct IoAsyncHandler {
     app: Arc<tokio::sync::Mutex<App>>,
 }
@@ -45,11 +44,32 @@ impl IoAsyncHandler {
     }
     async fn do_move(&mut self, direction: MoveDirection) -> Result<()> {
         let mut app = self.app.lock().await;
+        if !app.hasfood {
+            loop {
+                let selectx: usize = rand::thread_rng().gen_range(0..20);
+                let selecty: usize = rand::thread_rng().gen_range(0..20);
+                if let MoveDirection::Empty = app.grid[selectx][selecty] {
+                    app.grid[selectx][selecty] = MoveDirection::Food;
+                    app.hasfood = true;
+                    break;
+                }
+            }
+        }
         let (mut startx, mut starty) = app.start;
         let (endx, endy) = app.end;
         let mut direction = direction;
-        if let MoveDirection::Empty = direction {
-            direction = app.grid[startx][starty];
+        //if let MoveDirection::Empty = direction {
+        //    direction = app.grid[startx][starty];
+        //}
+        match (direction, app.grid[startx][starty]) {
+            (MoveDirection::Up, MoveDirection::Down)
+            | (MoveDirection::Down, MoveDirection::Up)
+            | (MoveDirection::Left, MoveDirection::Right)
+            | (MoveDirection::Right, MoveDirection::Left)
+            | (MoveDirection::Empty, _) => {
+                direction = app.grid[startx][starty];
+            }
+            _ => {}
         }
         match direction {
             MoveDirection::Up => {
@@ -80,10 +100,50 @@ impl IoAsyncHandler {
                     startx += 1;
                 }
             }
-            MoveDirection::Empty => {}
+            MoveDirection::Empty | MoveDirection::Food => {}
         }
         if let MoveDirection::Empty = app.grid[startx][starty] {
             app.grid[startx][starty] = direction;
+        } else if let MoveDirection::Food = app.grid[startx][starty] {
+            app.grid[startx][starty] = direction;
+            match direction {
+                MoveDirection::Up => {
+                    if starty == 0 {
+                        starty = 19;
+                    } else {
+                        starty -= 1;
+                    }
+                }
+                MoveDirection::Down => {
+                    if starty == 19 {
+                        starty = 0;
+                    } else {
+                        starty += 1;
+                    }
+                }
+                MoveDirection::Left => {
+                    if startx == 0 {
+                        startx = 19;
+                    } else {
+                        startx -= 1;
+                    }
+                }
+                MoveDirection::Right => {
+                    if startx == 19 {
+                        startx = 0;
+                    } else {
+                        startx += 1;
+                    }
+                }
+                MoveDirection::Empty | MoveDirection::Food => {}
+            }
+            app.hasfood = false;
+            if let MoveDirection::Empty = app.grid[startx][starty] {
+                app.grid[startx][starty] = direction;
+            } else {
+                app.con = false;
+                return Ok(());
+            }
         } else {
             app.con = false;
             return Ok(());
@@ -182,7 +242,7 @@ impl IoAsyncHandler {
                         break;
                     }
                 }
-                MoveDirection::Empty => {
+                MoveDirection::Empty | MoveDirection::Food => {
                     info!("⏰Empty");
                     break;
                 }

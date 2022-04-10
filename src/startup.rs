@@ -23,7 +23,7 @@ pub async fn start_ui(app: &Arc<tokio::sync::Mutex<App>>) -> Result<()> {
 
     let mut last_tick = Instant::now();
     // User event handler
-    let tick_rate = Duration::from_millis(200);
+    let tick_rate = Duration::from_millis(100);
     //let _: Result<()> = async {
     loop {
         let mut app = app.lock().await;

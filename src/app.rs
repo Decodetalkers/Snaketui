@@ -8,6 +8,7 @@ pub struct App {
     pub start: (usize, usize),
     pub end: (usize, usize),
     pub con: bool,
+    pub hasfood: bool,
 }
 
 impl App {
@@ -15,20 +16,13 @@ impl App {
         let mut grid = [[MoveDirection::Empty; 20]; 20];
         grid[0][0] = MoveDirection::Right;
         grid[1][0] = MoveDirection::Right;
-        grid[2][0] = MoveDirection::Right;
-        grid[3][0] = MoveDirection::Right;
-        grid[4][0] = MoveDirection::Right;
-        grid[5][0] = MoveDirection::Right;
-        grid[6][0] = MoveDirection::Right;
-        grid[7][0] = MoveDirection::Right;
-        grid[8][0] = MoveDirection::Right;
-        grid[9][0] = MoveDirection::Right;
         App {
             io_tx,
             grid,
-            start: (9, 0),
+            start: (1, 0),
             end: (0, 0),
             con: true,
+            hasfood: false,
         }
     }
     pub async fn dispatch(&mut self, action: IoEvent) {

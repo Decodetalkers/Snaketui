@@ -8,6 +8,7 @@ pub enum MoveDirection {
     Left,
     Right,
     Empty,
+    Food,
 }
 pub enum IoEvent {
     Initialize,

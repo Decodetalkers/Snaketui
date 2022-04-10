@@ -81,6 +81,9 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
             if let MoveDirection::Empty = app.grid[i][j] {
                 let block = Block::default().style(Style::default().bg(Color::Green));
                 f.render_widget(block, *ychunk);
+            } else if let MoveDirection::Food = app.grid[i][j] {
+                let block = Block::default().style(Style::default().bg(Color::Red));
+                f.render_widget(block, *ychunk);
             } else {
                 let block = Block::default().style(Style::default().bg(Color::Blue));
                 f.render_widget(block, *ychunk);
