@@ -174,8 +174,9 @@ impl IoAsyncHandler {
                     info!("⏰Up");
                     direction = app.grid[startx][starty];
                     app.grid[localx][localy] = MoveDirection::Up;
-                    app.grid[startx][starty] = MoveDirection::Empty;
+                    //app.grid[startx][starty] = MoveDirection::Empty;
                     if (startx, starty) == (endx, endy) {
+                        app.grid[startx][starty] = MoveDirection::Empty;
                         app.end = (bstartx, bstarty);
                         break;
                     }
@@ -197,8 +198,9 @@ impl IoAsyncHandler {
                     info!("⏰{},{} Down!", startx, starty);
                     direction = app.grid[startx][starty];
                     app.grid[localx][localy] = MoveDirection::Down;
-                    app.grid[startx][starty] = MoveDirection::Empty;
+                    //app.grid[startx][starty] = MoveDirection::Empty;
                     if (startx, starty) == (endx, endy) {
+                        app.grid[startx][starty] = MoveDirection::Empty;
                         app.end = (bstartx, bstarty);
                         break;
                     }
@@ -220,8 +222,9 @@ impl IoAsyncHandler {
                     info!("⏰Move Left");
                     direction = app.grid[startx][starty];
                     app.grid[localx][localy] = MoveDirection::Left;
-                    app.grid[startx][starty] = MoveDirection::Empty;
+                    //app.grid[startx][starty] = MoveDirection::Empty;
                     if (startx, starty) == (endx, endy) {
+                        app.grid[startx][starty] = MoveDirection::Empty;
                         app.end = (bstartx, bstarty);
                         break;
                     }
@@ -242,8 +245,9 @@ impl IoAsyncHandler {
                     info!("⏰ Right!");
                     direction = app.grid[startx][starty];
                     app.grid[localx][localy] = MoveDirection::Right;
-                    app.grid[startx][starty] = MoveDirection::Empty;
+                    //app.grid[startx][starty] = MoveDirection::Empty;
                     if (startx, starty) == (endx, endy) {
+                        app.grid[startx][starty] = MoveDirection::Empty;
                         app.end = (bstartx, bstarty);
                         break;
                     }
