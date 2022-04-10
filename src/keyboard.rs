@@ -1,8 +1,15 @@
-use std::time::Duration;
+//use std::time::Duration;
 mod handle;
 pub use handle::IoAsyncHandler;
-#[allow(dead_code)]
+#[derive(Clone, Copy)]
+pub enum MoveDirection {
+    Up,
+    Down,
+    Left,
+    Right,
+    Empty,
+}
 pub enum IoEvent {
     Initialize,
-    Sleep(Duration),
+    Move(MoveDirection),
 }

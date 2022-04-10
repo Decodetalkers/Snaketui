@@ -1,56 +1,34 @@
 pub(crate) mod ui;
 use log::error;
-use crate::keyboard::IoEvent;
-#[derive(Clone)]
-pub struct SinSignal {
-    x: f64,
-    interval: f64,
-    period: f64,
-    scale: f64,
-}
-
-impl SinSignal {
-    pub fn new(interval: f64, period: f64, scale: f64) -> SinSignal {
-        SinSignal {
-            x: 0.0,
-            interval,
-            period,
-            scale,
-        }
-    }
-}
-
-impl Iterator for SinSignal {
-    type Item = (f64, f64);
-    fn next(&mut self) -> Option<Self::Item> {
-        let point = (self.x, (self.x * 1.0 / self.period).sin() * self.scale);
-        self.x += self.interval;
-        Some(point)
-    }
-}
+use crate::keyboard::{IoEvent,MoveDirection};
 
 pub struct App {
     io_tx: tokio::sync::mpsc::Sender<IoEvent>,
-    signal1: SinSignal,
-    data1: Vec<(f64, f64)>,
-    signal2: SinSignal,
-    data2: Vec<(f64, f64)>,
-    window: [f64; 2],
+    pub grid: [[MoveDirection;20];20],
+    pub start: (usize,usize),
+    pub end: (usize,usize),
+    pub con: bool,
 }
 
 impl App {
     pub fn new(io_tx: tokio::sync::mpsc::Sender<IoEvent>) -> App {
-        let mut signal1 = SinSignal::new(0.2, 3.0, 18.0);
-        let mut signal2 = SinSignal::new(0.1, 2.0, 10.0);
-        let data1 = signal1.by_ref().take(200).collect::<Vec<(f64, f64)>>();
-        let data2 = signal2.by_ref().take(200).collect::<Vec<(f64, f64)>>();
+        let mut grid = [[MoveDirection::Empty;20];20];
+        grid[0][0] =MoveDirection::Right;
+        grid[1][0] = MoveDirection::Right;
+        grid[2][0] = MoveDirection::Right;
+        grid[3][0] = MoveDirection::Right;
+        grid[4][0] = MoveDirection::Right;
+        grid[5][0] = MoveDirection::Right;
+        grid[6][0] = MoveDirection::Right;
+        grid[7][0] = MoveDirection::Right;
+        grid[8][0] = MoveDirection::Right;
+        grid[9][0] = MoveDirection::Right;
         App {
             io_tx,
-            signal1,
-            data1,
-            signal2,
-            data2,
-            window: [0.0, 20.0],
+            grid,
+            start: (9,0),
+            end: (0,0),
+            con: true,
         }
     }
     pub async fn dispatch(&mut self, action: IoEvent) {
@@ -59,17 +37,5 @@ impl App {
         if let Err(e) = self.io_tx.send(action).await {
             error!("Error from dispatch {}", e);
         };
-    }
-    pub fn on_tick(&mut self) {
-        for _ in 0..5 {
-            self.data1.remove(0);
-        }
-        self.data1.extend(self.signal1.by_ref().take(5));
-        for _ in 0..10 {
-            self.data2.remove(0);
-        }
-        self.data2.extend(self.signal2.by_ref().take(10));
-        self.window[0] += 1.0;
-        self.window[1] += 1.0;
     }
 }

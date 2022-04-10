@@ -1,13 +1,12 @@
 use tui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout},
-    style::{Color, Modifier, Style},
-    symbols,
-    text::Span,
-    widgets::{Axis, Block, Borders, Chart, Dataset, GraphType},
+    style::{Color, Style},
+    widgets::{ Block, Borders},
     Frame,
 };
-const DATA: [(f64, f64); 5] = [(0.0, 0.0), (1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (4.0, 4.0)];
+use crate::keyboard::MoveDirection;
+
 use super::App;
 use tui_logger::TuiLoggerWidget;
 pub fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
@@ -16,108 +15,80 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
         .direction(Direction::Vertical)
         .constraints(
             [
-                Constraint::Ratio(1, 3),
-                Constraint::Ratio(1, 3),
+                Constraint::Ratio(2, 3),
                 Constraint::Ratio(1, 3),
             ]
             .as_ref(),
         )
         .split(size);
-    let x_labels = vec![
-        Span::styled(
-            format!("{}", app.window[0]),
-            Style::default().add_modifier(Modifier::BOLD),
-        ),
-        Span::raw(format!("{}", (app.window[0] + app.window[1]) / 2.0)),
-        Span::styled(
-            format!("{}", app.window[1]),
-            Style::default().add_modifier(Modifier::BOLD),
-        ),
-    ];
-    let datasets = vec![
-        Dataset::default()
-            .name("data2")
-            .marker(symbols::Marker::Dot)
-            .style(Style::default().fg(Color::Cyan))
-            .data(&app.data1),
-        Dataset::default()
-            .name("data3")
-            .marker(symbols::Marker::Braille)
-            .style(Style::default().fg(Color::Yellow))
-            .data(&app.data2),
-    ];
+    let chunks2 = Layout::default()
+        .direction(Direction::Horizontal)
+        //.margin(1)
+        .constraints([
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+            Constraint::Percentage(5),
+        ].as_ref())
+        .split(chunks[0]);
 
-    let chart = Chart::new(datasets)
-        .block(
-            Block::default()
-                .title(Span::styled(
-                    "Chart 1",
-                    Style::default()
-                        .fg(Color::Cyan)
-                        .add_modifier(Modifier::BOLD),
-                ))
-                .borders(Borders::ALL),
-        )
-        .x_axis(
-            Axis::default()
-                .title("X Axis")
-                .style(Style::default().fg(Color::Gray))
-                .labels(x_labels)
-                .bounds(app.window),
-        )
-        .y_axis(
-            Axis::default()
-                .title("Y Axis")
-                .style(Style::default().fg(Color::Gray))
-                .labels(vec![
-                    Span::styled("-20", Style::default().add_modifier(Modifier::BOLD)),
-                    Span::raw("0"),
-                    Span::styled("20", Style::default().add_modifier(Modifier::BOLD)),
-                ])
-                .bounds([-20.0, 20.0]),
-        );
-    f.render_widget(chart, chunks[0]);
+    // Top two inner blocks
 
-    let datasets = vec![Dataset::default()
-        .name("data")
-        .marker(symbols::Marker::Braille)
-        .style(Style::default().fg(Color::Yellow))
-        .graph_type(GraphType::Line)
-        .data(&DATA)];
-    let chart = Chart::new(datasets)
-        .block(
-            Block::default()
-                .title(Span::styled(
-                    "Chart 2",
-                    Style::default()
-                        .fg(Color::Cyan)
-                        .add_modifier(Modifier::BOLD),
-                ))
-                .borders(Borders::ALL),
-        )
-        .x_axis(
-            Axis::default()
-                .title("X Axis")
-                .style(Style::default().fg(Color::Gray))
-                .bounds([0.0, 5.0])
-                .labels(vec![
-                    Span::styled("0", Style::default().add_modifier(Modifier::BOLD)),
-                    Span::raw("2.5"),
-                    Span::styled("5.0", Style::default().add_modifier(Modifier::BOLD)),
-                ]),
-        )
-        .y_axis(
-            Axis::default()
-                .title("Y Axis")
-                .style(Style::default().fg(Color::Gray))
-                .bounds([0.0, 5.0])
-                .labels(vec![
-                    Span::styled("0", Style::default().add_modifier(Modifier::BOLD)),
-                    Span::raw("2.5"),
-                    Span::styled("5.0", Style::default().add_modifier(Modifier::BOLD)),
-                ]),
-        );
-    f.render_widget(chart, chunks[1]);
+    // Top left inner block with green background
+    for (i, xchunk) in chunks2.iter().enumerate().take(20) {
+        let top_chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+                Constraint::Percentage(5),
+            ].as_ref())
+            .split(*xchunk);
+        for (j, ychunk) in top_chunks.iter().enumerate().take(20) {
+            if let MoveDirection::Empty = app.grid[i][j]{
+                let block = Block::default()
+                    .style(Style::default().bg(Color::Green));
+                f.render_widget(block, *ychunk);
+            } else {
+                let block = Block::default()
+                    .style(Style::default().bg(Color::Blue));
+                f.render_widget(block, *ychunk);
+            }
+        }
+    }
 
     let logger = TuiLoggerWidget::default()
         .style_error(Style::default().fg(Color::Red))
@@ -132,5 +103,5 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
                 .borders(Borders::ALL),
         )
         .style(Style::default().fg(Color::White).bg(Color::Black));
-    f.render_widget(logger, chunks[2]);
+    f.render_widget(logger, chunks[1]);
 }
