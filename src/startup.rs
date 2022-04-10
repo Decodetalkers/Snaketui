@@ -10,8 +10,8 @@ use std::time::{Duration, Instant};
 use tui::backend::CrosstermBackend;
 
 use crate::app::ui::ui;
+use crate::keyboard::{IoEvent, MoveDirection};
 use tui::Terminal;
-use crate::keyboard::{MoveDirection,IoEvent};
 pub async fn start_ui(app: &Arc<tokio::sync::Mutex<App>>) -> Result<()> {
     // Configure Crossterm backend for tui
     let stdout = stdout();
@@ -40,25 +40,23 @@ pub async fn start_ui(app: &Arc<tokio::sync::Mutex<App>>) -> Result<()> {
                 match key.code {
                     KeyCode::Char('q') => {
                         break;
-                    },
+                    }
                     KeyCode::Left => {
                         app.dispatch(IoEvent::Move(MoveDirection::Left)).await;
-                    },
+                    }
                     KeyCode::Right => {
                         app.dispatch(IoEvent::Move(MoveDirection::Right)).await;
-                    },
+                    }
                     KeyCode::Up => {
                         app.dispatch(IoEvent::Move(MoveDirection::Up)).await;
-                    },
+                    }
                     KeyCode::Down => {
                         app.dispatch(IoEvent::Move(MoveDirection::Down)).await;
-                    },
+                    }
                     KeyCode::Char(_) => {
                         app.dispatch(crate::keyboard::IoEvent::Initialize).await;
-                    },
-                    _ => {
-
-                    },
+                    }
+                    _ => {}
                 }
             }
         } else {

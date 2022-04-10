@@ -5,8 +5,8 @@ mod keyboard;
 use app::*;
 use keyboard::IoEvent;
 mod startup;
-use log::LevelFilter;
 use crate::keyboard::IoAsyncHandler;
+use log::LevelFilter;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     // setup terminal
